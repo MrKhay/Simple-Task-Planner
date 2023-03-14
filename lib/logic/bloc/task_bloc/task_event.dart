@@ -7,20 +7,22 @@ abstract class TaskEvent {
 }
 
 @immutable
-class TaskEvetDone extends TaskEvent {
-  
-  const TaskEvetDone();
-}
-
-@immutable
-class TaskEvenNotDone extends TaskEvent {
-  const TaskEvenNotDone();
-}
-
-@immutable
 class TaskEventAddNewTask extends TaskEvent {
   final String title;
   const TaskEventAddNewTask({
     required this.title,
   });
+}
+
+@immutable
+class TaskEventRemoveTask extends TaskEvent {
+  final Task task;
+  const TaskEventRemoveTask({
+    required this.task,
+  });
+}
+
+@immutable
+class TaskEventRemoveAll extends TaskEvent {
+  const TaskEventRemoveAll();
 }

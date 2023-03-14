@@ -5,4 +5,7 @@ class Strings {
   // HomeScreen
   static const homeScreenTitle = 'Home Screen';
   static const homeScreenCenterText = 'Welcome to Flutterly!';
+  static const todo = 'TODO';
+  static const task = 'TASK';
+
 }

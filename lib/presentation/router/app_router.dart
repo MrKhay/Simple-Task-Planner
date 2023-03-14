@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
-import '../../core/constants/strings.dart';
+import 'package:flutter_bloc_task_app/presentation/screens/todo_view/todo_view.dart';
 import '../../core/exceptions/route_exception.dart';
-import '../screens/home_screen/home_screen.dart';
+import '../screens/add_new_todo_view/add_new_todo_view.dart';
 
 class AppRouter {
   static const String home = '/';
+  static const String addNewTodoView = 'add_new_todo_view';
+  static const String task = 'task_view';
 
   const AppRouter._();
 
@@ -13,10 +14,13 @@ class AppRouter {
     switch (settings.name) {
       case home:
         return MaterialPageRoute(
-          builder: (_) => const HomeScreen(
-            title: Strings.homeScreenTitle,
-          ),
+          builder: (_) => const TodoView(),
         );
+      case addNewTodoView:
+        return MaterialPageRoute(
+          builder: (_) => const AddNewTodoTaskView(),
+        );
+
       default:
         throw const RouteException('Route not found!');
     }

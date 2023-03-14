@@ -4,67 +4,15 @@ import 'package:flutter_bloc_task_app/data/models/todo_model.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-List<Todo> mockedTodoEmpty = [];
-List<Todo> mockedTodo = [
-  Todo(
-    title: 'Todo 2',
-    timeCreated: DateTime(2023, 9, 7, 17, 30),
-    tasks: const [
-      Task(title: 'Task 1', isDone: false),
-    ],
-  ),
-];
-
-List<Todo> expectedMockedData1 = [
-  Todo(
-    title: 'Todo 2',
-    timeCreated: DateTime(2023, 9, 7, 17, 30),
-    tasks: const [
-      Task(title: 'Task 1', isDone: false),
-    ],
-  ),
-  Todo(
-    title: 'Todo 1',
-    timeCreated: DateTime(2023, 9, 7, 17, 30),
-    tasks: const [
-      Task(title: 'Task 1', isDone: false),
-    ],
-  ),
-];
-
-List<Todo> expectedMockedData2 = [
-  Todo(
-    title: 'Todo 2',
-    timeCreated: DateTime(2023, 9, 7, 17, 30),
-    tasks: const [
-      Task(title: 'Task 1', isDone: false),
-    ],
-  ),
-  Todo(
-    title: 'Todo 1',
-    timeCreated: DateTime(2023, 9, 7, 17, 30),
-    tasks: const [
-      Task(title: 'Task 1', isDone: false),
-    ],
-  ),
-  Todo(
-    title: 'Todo 1',
-    timeCreated: DateTime(2023, 9, 7, 17, 30),
-    tasks: const [
-      Task(title: 'Task 1', isDone: false),
-    ],
-  ),
-];
-
 void main() {
   blocTest<TodoBloc, TodoState?>(
     'Test inital condition',
-    build: () => TodoBloc(todoData: []),
+    build: () => TodoBloc(),
     verify: (bloc) => expect(bloc.state, null),
   );
 
   blocTest<TodoBloc, TodoState?>('Test load 1 notes',
-      build: () => TodoBloc(todoData: mockedTodoEmpty),
+      build: () => TodoBloc(),
       act: (bloc) {
         bloc.add(
           TodoEventAddNewTodo(
@@ -77,19 +25,21 @@ void main() {
         );
       },
       expect: () => [
-            TodoState(todos: [
-              Todo(
-                title: 'Todo 1',
-                timeCreated: DateTime(2023, 9, 7, 17, 30),
-                tasks: const [
-                  Task(title: 'Task 1', isDone: false),
-                ],
-              ),
-            ]),
+            TodoState(
+              todos: [
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(2023, 9, 7, 17, 30),
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: false),
+                  ],
+                ),
+              ],
+            ),
           ]);
 
   blocTest<TodoBloc, TodoState?>('Test load 2 notes',
-      build: () => TodoBloc(todoData: mockedTodo),
+      build: () => TodoBloc(),
       act: (bloc) {
         bloc.add(
           TodoEventAddNewTodo(
@@ -113,12 +63,14 @@ void main() {
       expect: () => {
             TodoState(todos: [
               Todo(
-                title: 'Todo 2',
+                title: 'Todo 1',
                 timeCreated: DateTime(2023, 9, 7, 17, 30),
                 tasks: const [
                   Task(title: 'Task 1', isDone: false),
                 ],
               ),
+            ]),
+            TodoState(todos: [
               Todo(
                 title: 'Todo 1',
                 timeCreated: DateTime(2023, 9, 7, 17, 30),
@@ -136,170 +88,221 @@ void main() {
             ]),
           });
 
-  blocTest<TodoBloc, TodoState?>('Test number of completed task in 0 todos',
-      build: () => TodoBloc(todoData: []),
-      act: (bloc) {
-        bloc.add(TodoEventGetNumberOfCompletedTask());
-      },
-      expect: () => {const TodoState(todos: [], completedTaskCount: 0)});
-
-  blocTest<TodoBloc, TodoState?>('Test number of completed task in 2 todos',
-      build: () => TodoBloc(todoData: [
-            Todo(
-              title: 'Todo 2',
-              timeCreated: DateTime(2023, 9, 7, 17, 30),
-              tasks: const [
-                Task(title: 'Task 1', isDone: true),
-              ],
-            ),
-            Todo(
-              title: 'Todo 2',
-              timeCreated: DateTime(2023, 9, 7, 17, 30),
-              tasks: const [
-                Task(title: 'Task 1', isDone: true),
-              ],
-            ),
-          ]),
-      act: (bloc) {
-        bloc.add(TodoEventGetNumberOfCompletedTask());
-      },
-      expect: () => {
-            TodoState(
-              todos: [
-                Todo(
-                  title: 'Todo 2',
-                  timeCreated: DateTime(2023, 9, 7, 17, 30),
-                  tasks: const [
-                    Task(title: 'Task 1', isDone: true),
-                  ],
-                ),
-                Todo(
-                  title: 'Todo 2',
-                  timeCreated: DateTime(2023, 9, 7, 17, 30),
-                  tasks: const [
-                    Task(title: 'Task 1', isDone: true),
-                  ],
-                ),
-              ],
-              completedTaskCount: 2,
-            )
-          });
-
-  blocTest<TodoBloc, TodoState?>('Test number of uncompleted task in 0 todos',
-      build: () => TodoBloc(todoData: []),
-      act: (bloc) {
-        bloc.add(TodoEventGetNumberOfUncompletedTask());
-      },
-      expect: () => {const TodoState(todos: [], unCompletedTaskCount: 0)});
-
-  blocTest<TodoBloc, TodoState?>('Test number of uncompleted task in 2 todos',
-      build: () => TodoBloc(todoData: [
-            Todo(
-              title: 'Todo 2',
-              timeCreated: DateTime(2023, 9, 7, 17, 30),
-              tasks: const [
-                Task(title: 'Task 1', isDone: false),
-              ],
-            ),
-            Todo(
-              title: 'Todo 2',
-              timeCreated: DateTime(2023, 9, 7, 17, 30),
-              tasks: const [
-                Task(title: 'Task 1', isDone: false),
-              ],
-            ),
-          ]),
-      act: (bloc) {
-        bloc.add(TodoEventGetNumberOfUncompletedTask());
-      },
-      expect: () => {
-            TodoState(
-              todos: [
-                Todo(
-                  title: 'Todo 2',
-                  timeCreated: DateTime(2023, 9, 7, 17, 30),
-                  tasks: const [
-                    Task(title: 'Task 1', isDone: false),
-                  ],
-                ),
-                Todo(
-                  title: 'Todo 2',
-                  timeCreated: DateTime(2023, 9, 7, 17, 30),
-                  tasks: const [
-                    Task(title: 'Task 1', isDone: false),
-                  ],
-                ),
-              ],
-              unCompletedTaskCount: 2,
-            )
-          });
-
   blocTest<TodoBloc, TodoState?>(
-      'Test number of completed and uncompleted task in 2 todos',
-      build: () => TodoBloc(todoData: [
-            Todo(
-              title: 'Todo 2',
-              timeCreated: DateTime(2023, 9, 7, 17, 30),
-              tasks: const [
-                Task(title: 'Task 1', isDone: true),
-                Task(title: 'Task 1', isDone: true),
-                Task(title: 'Task 1', isDone: true),
-              ],
-            ),
-            Todo(
-              title: 'Todo 2',
-              timeCreated: DateTime(2023, 9, 7, 17, 30),
-              tasks: const [
-                Task(title: 'Task 1', isDone: true),
-                Task(title: 'Task 1', isDone: true),
-                Task(title: 'Task 1', isDone: false),
-              ],
-            ),
-          ]),
+      'Add 2 todos and test number of completed task',
+      build: () => TodoBloc(),
       act: (bloc) {
-        bloc.add(TodoEventGetNumberOfCompletedTask());
-        bloc.add(TodoEventGetNumberOfUncompletedTask());
+        bloc.add(
+          TodoEventAddNewTodo(
+            title: 'Todo 1',
+            timeCreated: DateTime(2023, 9, 7, 17, 30),
+            tasks: const [
+              Task(title: 'Task 1', isDone: true),
+            ],
+          ),
+        );
+        bloc.add(
+          TodoEventAddNewTodo(
+            title: 'Todo 1',
+            timeCreated: DateTime(2023, 9, 7, 17, 30),
+            tasks: const [
+              Task(title: 'Task 1', isDone: false),
+            ],
+          ),
+        );
+        bloc.add(const TodoEventGetNumberOfCompletedTask());
       },
       expect: () => {
             TodoState(todos: [
               Todo(
-                title: 'Todo 2',
+                title: 'Todo 1',
                 timeCreated: DateTime(2023, 9, 7, 17, 30),
                 tasks: const [
                   Task(title: 'Task 1', isDone: true),
-                  Task(title: 'Task 1', isDone: true),
+                ],
+              ),
+            ]),
+            TodoState(todos: [
+              Todo(
+                title: 'Todo 1',
+                timeCreated: DateTime(2023, 9, 7, 17, 30),
+                tasks: const [
                   Task(title: 'Task 1', isDone: true),
                 ],
               ),
               Todo(
-                title: 'Todo 2',
+                title: 'Todo 1',
+                timeCreated: DateTime(2023, 9, 7, 17, 30),
+                tasks: const [
+                  Task(title: 'Task 1', isDone: false),
+                ],
+              ),
+            ]),
+            TodoState(todos: [
+              Todo(
+                title: 'Todo 1',
                 timeCreated: DateTime(2023, 9, 7, 17, 30),
                 tasks: const [
                   Task(title: 'Task 1', isDone: true),
-                  Task(title: 'Task 1', isDone: true),
+                ],
+              ),
+              Todo(
+                title: 'Todo 1',
+                timeCreated: DateTime(2023, 9, 7, 17, 30),
+                tasks: const [
                   Task(title: 'Task 1', isDone: false),
                 ],
               ),
             ], completedTaskCount: 1),
-            TodoState(todos: [
-              Todo(
-                title: 'Todo 2',
-                timeCreated: DateTime(2023, 9, 7, 17, 30),
-                tasks: const [
-                  Task(title: 'Task 1', isDone: true),
-                  Task(title: 'Task 1', isDone: true),
-                  Task(title: 'Task 1', isDone: true),
-                ],
-              ),
-              Todo(
-                title: 'Todo 2',
-                timeCreated: DateTime(2023, 9, 7, 17, 30),
-                tasks: const [
-                  Task(title: 'Task 1', isDone: true),
-                  Task(title: 'Task 1', isDone: true),
-                  Task(title: 'Task 1', isDone: false),
-                ],
-              ),
-            ], unCompletedTaskCount: 0),
           });
+
+  blocTest<TodoBloc, TodoState?>(
+      'Add 2 todos and test number of uncompleted task',
+      build: () => TodoBloc(),
+      act: (bloc) {
+        bloc.add(
+          TodoEventAddNewTodo(
+            title: 'Todo 1',
+            timeCreated: DateTime(2023, 9, 7, 17, 30),
+            tasks: const [
+              Task(title: 'Task 1', isDone: true),
+            ],
+          ),
+        );
+        bloc.add(
+          TodoEventAddNewTodo(
+            title: 'Todo 1',
+            timeCreated: DateTime(2023, 9, 7, 17, 30),
+            tasks: const [
+              Task(title: 'Task 1', isDone: false),
+            ],
+          ),
+        );
+        bloc.add(const TodoEventGetNumberOfCompletedTask());
+      },
+      expect: () => {
+            TodoState(
+              todos: [
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(2023, 9, 7, 17, 30),
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: true),
+                  ],
+                ),
+              ],
+              unCompletedTaskCount: 0,
+              completedTaskCount: 0,
+            ),
+            TodoState(
+              todos: [
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(2023, 9, 7, 17, 30),
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: true),
+                  ],
+                ),
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(2023, 9, 7, 17, 30),
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: false),
+                  ],
+                ),
+              ],
+              unCompletedTaskCount: 0,
+              completedTaskCount: 0,
+            ),
+            TodoState(
+              todos: [
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(2023, 9, 7, 17, 30),
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: true),
+                  ],
+                ),
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(2023, 9, 7, 17, 30),
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: false),
+                  ],
+                ),
+              ],
+              unCompletedTaskCount: 0,
+              completedTaskCount: 1,
+            ),
+          });
+
+  blocTest(
+    'Add new todo then check if all todo\'s are completed ',
+    build: () => TodoBloc(),
+    act: (bloc) {
+      bloc.add(TodoEventAddNewTodo(
+          title: 'Yoo',
+          timeCreated: DateTime(0, 0, 000),
+          tasks: const [Task(title: 'YELLO', isDone: false)]));
+      bloc.add(const TodoEventToggleTaskIsDone(
+        taskIndex: 0,
+        todoIndex: 0,
+        isDone: true,
+      ));
+      bloc.add(const TodoEventToggleTodoIsCompleted());
+    },
+    expect: () => [
+      TodoState(
+        todos: [
+          Todo(
+            title: 'Yoo',
+            timeCreated: DateTime(0, 0, 000),
+            tasks: const [
+              Task(
+                title: 'YELLO',
+                isDone: false,
+              ),
+            ],
+            isCompleted: false,
+          ),
+        ],
+        completedTaskCount: 0,
+        unCompletedTaskCount: 0,
+      ),
+      TodoState(
+        todos: [
+          Todo(
+            title: 'Yoo',
+            timeCreated: DateTime(0, 0, 000),
+            tasks: const [
+              Task(
+                title: 'YELLO',
+                isDone: true,
+              ),
+            ],
+            isCompleted: false,
+          ),
+        ],
+        completedTaskCount: 0,
+        unCompletedTaskCount: 0,
+      ),
+      TodoState(
+        todos: [
+          Todo(
+            title: 'Yoo',
+            timeCreated: DateTime(0, 0, 000),
+            tasks: const [
+              Task(
+                title: 'YELLO',
+                isDone: true,
+              ),
+            ],
+            isCompleted: true,
+          ),
+        ],
+        completedTaskCount: 0,
+        unCompletedTaskCount: 0,
+      ),
+    ],
+  );
 }

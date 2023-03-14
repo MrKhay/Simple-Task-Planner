@@ -1,28 +1,27 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_bloc_task_app/data/models/task_model.dart';
 
 @immutable
-class Todo {
+class Todo extends Equatable {
   final String title;
   final DateTime timeCreated;
   bool isCompleted;
-  final Iterable<Task> tasks;
+  final List<Task> tasks;
   Todo({
     this.isCompleted = false,
     required this.title,
     required this.timeCreated,
     required this.tasks,
-  }) {
-    isCompleted = tasks.every((element) => element.isDone == true);
-  }
+  });
 
   Todo copyWith({
     String? title,
     DateTime? timeCreated,
     bool? isCompleted,
-    Iterable<Task>? tasks,
+    List<Task>? tasks,
   }) {
     return Todo(
       title: title ?? this.title,
@@ -33,25 +32,15 @@ class Todo {
   }
 
   @override
-  bool operator ==(covariant Todo other) {
-    if (identical(this, other)) return true;
-
-    return other.title == title &&
-        other.timeCreated == timeCreated &&
-        other.isCompleted == isCompleted &&
-        other.tasks == tasks;
-  }
-
-  @override
-  int get hashCode {
-    return title.hashCode ^
-        timeCreated.hashCode ^
-        isCompleted.hashCode ^
-        tasks.hashCode;
-  }
-
-  @override
   String toString() {
     return 'TODO(title: $title, timeCreated: $timeCreated, isCompleted: $isCompleted, tasks: $tasks)';
   }
+
+  @override
+  List<Object?> get props => [
+        title,
+        timeCreated,
+        tasks,
+        isCompleted,
+      ];
 }

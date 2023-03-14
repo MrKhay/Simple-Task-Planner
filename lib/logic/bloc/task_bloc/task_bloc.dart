@@ -9,12 +9,29 @@ part 'task_state.dart';
 class TaskBloc extends Bloc<TaskEvent, TaskState?> {
   TaskBloc() : super(null) {
     on<TaskEventAddNewTask>((event, emit) {
-      final title = event.title;
-      final task = Task(title: title, isDone: false);
+      var task = Task(title: event.title, isDone: false);
 
-      emit(TaskState(task: task));
+      var tanksList = state?.task ?? [];
+
+      emit(
+        TaskState(task: [...tanksList, task]),
+      );
+    });
+
+    on<TaskEventRemoveTask>((event, emit) {
+      var tasks = state?.task ?? [];
+
+      tasks = tasks.where((task) => task != event.task).toList();
+
+      emit(
+        TaskState(task: [...tasks]),
+      );
+    });
+
+    on<TaskEventRemoveAll>((event, emit) {
+      emit(
+        const TaskState(task: []),
+      );
     });
   }
 }
-
-

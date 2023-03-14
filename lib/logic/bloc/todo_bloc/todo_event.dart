@@ -7,7 +7,9 @@ abstract class TodoEvent {
 }
 
 @immutable
-class TodoEventGetNumberOfCompletedTask extends TodoEvent {}
+class TodoEventGetNumberOfCompletedTask extends TodoEvent {
+  const TodoEventGetNumberOfCompletedTask();
+}
 
 @immutable
 class TodoEventGetNumberOfUncompletedTask extends TodoEvent {}
@@ -35,4 +37,21 @@ class TodoEventDeleteTodo extends TodoEvent {
 @immutable
 class TodoEventDeleteAllTodos extends TodoEvent {
   const TodoEventDeleteAllTodos();
+}
+
+@immutable
+class TodoEventToggleTaskIsDone extends TodoEvent {
+  final int todoIndex;
+  final int taskIndex;
+  final bool isDone;
+  const TodoEventToggleTaskIsDone({
+    required this.taskIndex,
+    required this.todoIndex,
+    required this.isDone,
+  });
+}
+
+@immutable
+class TodoEventToggleTodoIsCompleted extends TodoEvent {
+  const TodoEventToggleTodoIsCompleted();
 }

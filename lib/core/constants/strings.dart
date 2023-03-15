@@ -7,5 +7,5 @@ class Strings {
   static const homeScreenCenterText = 'Welcome to Flutterly!';
   static const todo = 'TODO';
   static const task = 'TASK';
-
+  static const todoDataBox = 'todoDataBox';
 }

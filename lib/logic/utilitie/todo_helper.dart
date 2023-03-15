@@ -1,4 +1,4 @@
-import 'package:flutter_bloc_task_app/data/models/todo_model.dart';
+import 'package:flutter_bloc_task_app/data/models/todo_model/todo_model.dart';
 
 // get number of completed task
 int getNumberOfCompleteTodo(Iterable<Todo> todos) {

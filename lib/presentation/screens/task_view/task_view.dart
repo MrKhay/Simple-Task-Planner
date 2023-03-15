@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_task_app/core/constants/strings.dart';
-import 'package:flutter_bloc_task_app/data/models/task_model.dart';
+import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
-import 'package:collection/collection.dart';
-import '../../../data/models/todo_model.dart';
 
 class TaskView extends StatelessWidget {
   final int todoIndex;
@@ -12,8 +10,6 @@ class TaskView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final taskData =
-    //     context.watch<TodoBloc>().state?.todos[todoIndex].tasks ?? [];
     final taskData = context
         .select((TodoBloc bloc) => bloc.state?.todos[todoIndex].tasks ?? []);
     return Scaffold(

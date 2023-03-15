@@ -1,5 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_bloc_task_app/data/models/task_model.dart';
+import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,7 +15,7 @@ void main() {
     build: () => TaskBloc(),
     act: (bloc) => bloc.add(const TaskEventAddNewTask(title: 'Hello')),
     expect: () => [
-      TaskState(task: [Task(title: 'Hello', isDone: false)])
+      const TaskState(task: [Task(title: 'Hello', isDone: false)])
     ],
   );
 

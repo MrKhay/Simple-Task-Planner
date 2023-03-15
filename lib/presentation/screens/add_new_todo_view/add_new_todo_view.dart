@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_task_app/data/models/task_model.dart';
+import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
+import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../core/constants/strings.dart';
 
@@ -36,15 +37,31 @@ class AddNewTodoTaskView extends HookWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                MaterialButton(
-                  onPressed: () {
-                    context.read<TaskBloc>().add(TaskEventAddNewTask(
-                          title: taskController.text,
-                        ));
-                  },
-                  color: Colors.blue,
-                  padding: const EdgeInsets.all(16),
-                  child: const Text('Add new event'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    MaterialButton(
+                      onPressed: () {
+                        context.read<TodoBloc>().add(TodoEventAddNewTodo(
+                            title: 'Khay',
+                            timeCreated: DateTime.now(),
+                            tasks: context.read<TaskBloc>().state?.task ?? []));
+                      },
+                      color: Colors.blue,
+                      padding: const EdgeInsets.all(16),
+                      child: const Text('Add new todo'),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        context.read<TaskBloc>().add(TaskEventAddNewTask(
+                              title: taskController.text,
+                            ));
+                      },
+                      color: Colors.blue,
+                      padding: const EdgeInsets.all(16),
+                      child: const Text('Add new event'),
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: BlocBuilder<TaskBloc, TaskState?>(

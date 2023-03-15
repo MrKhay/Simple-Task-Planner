@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_task_app/core/constants/strings.dart';
+import 'package:flutter_bloc_task_app/core/extension/todo_data_extension.dart';
+
 import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
 import 'package:flutter_bloc_task_app/presentation/router/app_router.dart';
 import 'package:intl/intl.dart';
-import '../../../data/models/todo_model.dart';
+import '../../../data/models/todo_model/todo_model.dart';
 import '../task_view/task_view.dart';
 
 class TodoView extends StatelessWidget {
@@ -21,8 +22,14 @@ class TodoView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(Strings.todo),
+          title: Text(DateTime.now().formateDay()),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {},
+            )
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -30,10 +37,6 @@ class TodoView extends StatelessWidget {
               context,
               AppRouter.addNewTodoView,
             );
-            // context.read<TodoBloc>().add(TodoEventAddNewTodo(
-            //     title: 'Hello',
-            //     timeCreated: DateTime(2023, 9, 7, 17, 30),
-            //     tasks: []));
           },
           child: const Icon(Icons.add),
         ),
@@ -62,6 +65,11 @@ class TodoView extends StatelessWidget {
 
 Widget todoTile(Todo todo) {
   return ListTile(
+    leading: Container(
+      width: 10,
+      height: 10,
+      color: todo.barColor,
+    ),
     title: Text(
       todo.title,
       style: const TextStyle(color: Colors.black),
@@ -70,9 +78,4 @@ Widget todoTile(Todo todo) {
       todo.timeCreated.formateDateTime(),
     ),
   );
-}
-
-extension FormatDateTime on DateTime {
-  String formateDateTime() =>
-      DateFormat('yyy-MM-dd h:mm a', 'en_US').format(this);
 }

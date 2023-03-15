@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../../data/models/task_model.dart';
+import '../../../data/models/task_model/task_model.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';

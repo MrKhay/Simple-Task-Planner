@@ -43,6 +43,7 @@ class TodoEventDeleteAllTodos extends TodoEvent {
 class TodoEventToggleTaskIsDone extends TodoEvent {
   final int todoIndex;
   final int taskIndex;
+
   final bool isDone;
   const TodoEventToggleTaskIsDone({
     required this.taskIndex,
@@ -54,4 +55,9 @@ class TodoEventToggleTaskIsDone extends TodoEvent {
 @immutable
 class TodoEventToggleTodoIsCompleted extends TodoEvent {
   const TodoEventToggleTodoIsCompleted();
+}
+
+@immutable
+class TodoEventInitilize extends TodoEvent {
+  const TodoEventInitilize();
 }

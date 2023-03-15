@@ -1,3 +1,3 @@
-# flutter_bloc_task_app
+# Task Planner App
 
-A new Flutter project.
+Be more organized by schudleing all your activitie for the day.

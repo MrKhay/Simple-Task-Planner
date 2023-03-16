@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
-import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -18,14 +16,14 @@ class Todo extends Equatable with HiveObjectMixin {
   @HiveField(1)
   final DateTime timeCreated;
   @HiveField(2)
-  bool isCompleted;
+  final bool isCompleted;
   @HiveField(3)
   final Color barColor;
   @HiveField(4)
   final List<Task> tasks;
 
   Todo({
-    this.isCompleted = false,
+    required this.isCompleted,
     required this.title,
     required this.timeCreated,
     required this.tasks,

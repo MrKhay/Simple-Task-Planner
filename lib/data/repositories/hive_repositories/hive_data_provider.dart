@@ -14,4 +14,6 @@ abstract class HiveStorageProtocol {
 
   // delete data
   void deleteData(Todo todo);
+  // delete all data
+  void deleteAllData();
 }

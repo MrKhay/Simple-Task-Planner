@@ -1,308 +1,191 @@
-// import 'package:bloc_test/bloc_test.dart';
-// import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
-// import 'package:flutter_bloc_task_app/data/models/todo_model/todo_model.dart';
-// import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
-// import 'package:flutter_test/flutter_test.dart';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
+import 'package:flutter_bloc_task_app/data/models/todo_model/todo_model.dart';
+import 'package:flutter_bloc_task_app/data/repositories/hive_repositories/hive_data_provider.dart';
+import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
 
-// void main() {
-//   blocTest<TodoBloc, TodoState?>(
-//     'Test inital condition',
-//     build: () => TodoBloc(),
-//     verify: (bloc) => expect(bloc.state, null),
-//   );
+var mockedData = [
+  Todo(
+      title: 'Khay',
+      timeCreated: DateTime(0),
+      isCompleted: false,
+      tasks: const [
+        Task(title: 'Task 1', isDone: false),
+      ],
+      barColor: Colors.black),
+  Todo(
+      title: 'Khay',
+      timeCreated: DateTime(0),
+      isCompleted: false,
+      tasks: const [
+        Task(title: 'Task 1', isDone: false),
+      ],
+      barColor: Colors.black),
+];
 
-//   blocTest<TodoBloc, TodoState?>('Test load 1 notes',
-//       build: () => TodoBloc(),
-//       act: (bloc) {
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: false),
-//             ],
-//           ),
-//         );
-//       },
-//       expect: () => [
-//             TodoState(
-//               todos: [
-//                 Todo(
-//                   title: 'Todo 1',
-//                   timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                   tasks: const [
-//                     Task(title: 'Task 1', isDone: false),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ]);
+class HiveMockedData implements HiveStorageProtocol {
+  @override
+  void createData(Todo todo) {
+    mockedData.add(todo);
+  }
 
-//   blocTest<TodoBloc, TodoState?>('Test load 2 notes',
-//       build: () => TodoBloc(),
-//       act: (bloc) {
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: false),
-//             ],
-//           ),
-//         );
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: false),
-//             ],
-//           ),
-//         );
-//       },
-//       expect: () => {
-//             TodoState(todos: [
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: false),
-//                 ],
-//               ),
-//             ]),
-//             TodoState(todos: [
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: false),
-//                 ],
-//               ),
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: false),
-//                 ],
-//               ),
-//             ]),
-//           });
+  @override
+  void deleteData(Todo todo) {
+    mockedData.remove(todo);
+  }
 
-//   blocTest<TodoBloc, TodoState?>(
-//       'Add 2 todos and test number of completed task',
-//       build: () => TodoBloc(),
-//       act: (bloc) {
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: true),
-//             ],
-//           ),
-//         );
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: false),
-//             ],
-//           ),
-//         );
-//         bloc.add(const TodoEventGetNumberOfCompletedTask());
-//       },
-//       expect: () => {
-//             TodoState(todos: [
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: true),
-//                 ],
-//               ),
-//             ]),
-//             TodoState(todos: [
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: true),
-//                 ],
-//               ),
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: false),
-//                 ],
-//               ),
-//             ]),
-//             TodoState(todos: [
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: true),
-//                 ],
-//               ),
-//               Todo(
-//                 title: 'Todo 1',
-//                 timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                 tasks: const [
-//                   Task(title: 'Task 1', isDone: false),
-//                 ],
-//               ),
-//             ], completedTaskCount: 1),
-//           });
+  @override
+  Future<Box<Object>> initDataBase() {
+    return Future.delayed(Duration.zero);
+  }
 
-//   blocTest<TodoBloc, TodoState?>(
-//       'Add 2 todos and test number of uncompleted task',
-//       build: () => TodoBloc(),
-//       act: (bloc) {
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: true),
-//             ],
-//           ),
-//         );
-//         bloc.add(
-//           TodoEventAddNewTodo(
-//             title: 'Todo 1',
-//             timeCreated: DateTime(2023, 9, 7, 17, 30),
-//             tasks: const [
-//               Task(title: 'Task 1', isDone: false),
-//             ],
-//           ),
-//         );
-//         bloc.add(const TodoEventGetNumberOfCompletedTask());
-//       },
-//       expect: () => {
-//             TodoState(
-//               todos: [
-//                 Todo(
-//                   title: 'Todo 1',
-//                   timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                   tasks: const [
-//                     Task(title: 'Task 1', isDone: true),
-//                   ],
-//                 ),
-//               ],
-//               unCompletedTaskCount: 0,
-//               completedTaskCount: 0,
-//             ),
-//             TodoState(
-//               todos: [
-//                 Todo(
-//                   title: 'Todo 1',
-//                   timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                   tasks: const [
-//                     Task(title: 'Task 1', isDone: true),
-//                   ],
-//                 ),
-//                 Todo(
-//                   title: 'Todo 1',
-//                   timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                   tasks: const [
-//                     Task(title: 'Task 1', isDone: false),
-//                   ],
-//                 ),
-//               ],
-//               unCompletedTaskCount: 0,
-//               completedTaskCount: 0,
-//             ),
-//             TodoState(
-//               todos: [
-//                 Todo(
-//                   title: 'Todo 1',
-//                   timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                   tasks: const [
-//                     Task(title: 'Task 1', isDone: true),
-//                   ],
-//                 ),
-//                 Todo(
-//                   title: 'Todo 1',
-//                   timeCreated: DateTime(2023, 9, 7, 17, 30),
-//                   tasks: const [
-//                     Task(title: 'Task 1', isDone: false),
-//                   ],
-//                 ),
-//               ],
-//               unCompletedTaskCount: 0,
-//               completedTaskCount: 1,
-//             ),
-//           });
+  @override
+  List<Object> readAllData() {
+    return mockedData;
+  }
 
-//   blocTest(
-//     'Add new todo then check if all todo\'s are completed ',
-//     build: () => TodoBloc(),
-//     act: (bloc) {
-//       bloc.add(TodoEventAddNewTodo(
-//           title: 'Yoo',
-//           timeCreated: DateTime(0, 0, 000),
-//           tasks: const [Task(title: 'YELLO', isDone: false)]));
-//       bloc.add(const TodoEventToggleTaskIsDone(
-//         taskIndex: 0,
-//         todoIndex: 0,
-//         isDone: true,
-//       ));
-//       bloc.add(const TodoEventToggleTodoIsCompleted());
-//     },
-//     expect: () => [
-//       TodoState(
-//         todos: [
-//           Todo(
-//             title: 'Yoo',
-//             timeCreated: DateTime(0, 0, 000),
-//             tasks: const [
-//               Task(
-//                 title: 'YELLO',
-//                 isDone: false,
-//               ),
-//             ],
-//             isCompleted: false,
-//           ),
-//         ],
-//         completedTaskCount: 0,
-//         unCompletedTaskCount: 0,
-//       ),
-//       TodoState(
-//         todos: [
-//           Todo(
-//             title: 'Yoo',
-//             timeCreated: DateTime(0, 0, 000),
-//             tasks: const [
-//               Task(
-//                 title: 'YELLO',
-//                 isDone: true,
-//               ),
-//             ],
-//             isCompleted: false,
-//           ),
-//         ],
-//         completedTaskCount: 0,
-//         unCompletedTaskCount: 0,
-//       ),
-//       TodoState(
-//         todos: [
-//           Todo(
-//             title: 'Yoo',
-//             timeCreated: DateTime(0, 0, 000),
-//             tasks: const [
-//               Task(
-//                 title: 'YELLO',
-//                 isDone: true,
-//               ),
-//             ],
-//             isCompleted: true,
-//           ),
-//         ],
-//         completedTaskCount: 0,
-//         unCompletedTaskCount: 0,
-//       ),
-//     ],
-//   );
-// }
+  @override
+  void updateData(Todo todo, int key) {
+    mockedData[key] = todo;
+  }
+
+  @override
+  void deleteAllData() {
+    // TODO: implement deleteAllData
+  }
+}
+
+void main() {
+  blocTest<TodoBloc, TodoState?>(
+    'Test inital condition',
+    build: () => TodoBloc(storageApi: HiveMockedData()),
+    verify: (bloc) => expect(bloc.state, null),
+  );
+
+  blocTest<TodoBloc, TodoState?>('Test add new todo',
+      build: () => TodoBloc(
+            storageApi: HiveMockedData(),
+            randomColorPicker: () => Colors.red,
+          ),
+      act: (bloc) {
+        bloc.add(
+          TodoEventAddNewTodo(
+            title: 'Todo 1',
+            timeCreated: DateTime(0),
+            tasks: const [
+              Task(title: 'Task 1', isDone: false),
+            ],
+          ),
+        );
+      },
+      expect: () => [
+            TodoState(
+              todos: [
+                Todo(
+                    title: 'Khay',
+                    timeCreated: DateTime(0),
+                    isCompleted: false,
+                    tasks: const [
+                      Task(title: 'Task 1', isDone: false),
+                    ],
+                    barColor: Colors.black),
+                Todo(
+                    title: 'Khay',
+                    timeCreated: DateTime(0),
+                    isCompleted: false,
+                    tasks: const [
+                      Task(title: 'Task 1', isDone: false),
+                    ],
+                    barColor: Colors.black),
+                Todo(
+                  title: 'Todo 1',
+                  timeCreated: DateTime(0),
+                  isCompleted: false,
+                  barColor: Colors.red,
+                  tasks: const [
+                    Task(title: 'Task 1', isDone: false),
+                  ],
+                ),
+              ],
+              completedTaskCount: 0,
+              unCompletedTaskCount: 3,
+            ),
+          ]);
+
+  blocTest<TodoBloc, TodoState?>('Test remove todo',
+      build: () => TodoBloc(
+            storageApi: HiveMockedData(),
+            randomColorPicker: () => Colors.red,
+          ),
+      act: (bloc) {
+        bloc.add(
+          TodoEventDeleteTodo(
+            todo: Todo(
+                title: 'Khay',
+                timeCreated: DateTime(0),
+                isCompleted: false,
+                tasks: const [
+                  Task(title: 'Task 1', isDone: false),
+                ],
+                barColor: Colors.black),
+          ),
+        );
+      },
+      expect: () => [
+            TodoState(
+              todos: [
+                Todo(
+                    title: 'Khay',
+                    timeCreated: DateTime(0),
+                    isCompleted: false,
+                    tasks: const [
+                      Task(title: 'Task 1', isDone: false),
+                    ],
+                    barColor: Colors.black),
+              ],
+              completedTaskCount: 0,
+              unCompletedTaskCount: 1,
+            ),
+          ]);
+  blocTest<TodoBloc, TodoState?>(
+    'Test toggle task is done',
+    build: () => TodoBloc(
+      storageApi: HiveMockedData(),
+      randomColorPicker: () => Colors.red,
+    ),
+    act: (bloc) {
+      bloc.add(const TodoEventToggleTaskIsDone(
+          taskIndex: 0, todoIndex: 1, isDone: true));
+    },
+    expect: () => [
+      TodoState(
+        todos: [
+          Todo(
+              title: 'Khay',
+              timeCreated: DateTime(0),
+              tasks: const [
+                Task(title: 'Task 1', isDone: false),
+              ],
+              barColor: Colors.black,
+              isCompleted: false),
+          Todo(
+              title: 'Khay',
+              timeCreated: DateTime(0),
+              tasks: const [
+                Task(
+                  title: 'Task 1',
+                  isDone: true,
+                ),
+              ],
+              barColor: Colors.black,
+              isCompleted: true),
+        ],
+        completedTaskCount: 1,
+        unCompletedTaskCount: 1,
+      ),
+    ],
+  );
+}

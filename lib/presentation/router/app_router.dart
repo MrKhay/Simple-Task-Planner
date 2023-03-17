@@ -18,7 +18,7 @@ class AppRouter {
         );
       case addNewTodoView:
         return MaterialPageRoute(
-          builder: (_) => const AddNewTodoTaskView(),
+          builder: (_) => AddNewTodoTaskView(),
         );
 
       default:

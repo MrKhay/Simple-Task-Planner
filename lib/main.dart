@@ -8,11 +8,15 @@ import 'logic/bloc/todo_bloc/todo_bloc.dart';
 import 'logic/debug/app_bloc_observer.dart';
 import 'presentation/router/app_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // init hive local storage
-  await Hive.initFlutter();
+  final document = await getApplicationDocumentsDirectory();
+  Hive.init(document.path);
+
   await TodoDataProvider().initDataBase();
   Bloc.observer = AppBlocObserver();
   runApp(const MyApp());

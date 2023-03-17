@@ -2,23 +2,23 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc_task_app/core/extension/todo_data_extension.dart';
 import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
 import 'package:flutter_bloc_task_app/data/repositories/hive_repositories/hive_data_provider.dart';
-
 import '../../../data/models/todo_model/todo_model.dart';
 
 part 'todo_event.dart';
 part 'todo_state.dart';
 
-typedef DecodeTodoData = Future<List<Todo>> Function();
+typedef GenerateRandomColor = Color Function();
 
 class TodoBloc extends Bloc<TodoEvent, TodoState?> {
   final HiveStorageProtocol storageApi;
-  TodoBloc({required this.storageApi}) : super(null) {
+
+  TodoBloc({required this.storageApi, GenerateRandomColor? randomColorPicker})
+      : super(null) {
     on<TodoEventInitilize>((event, emit) {
       var todoData = storageApi.readAllData() as List<Todo>;
 
@@ -30,11 +30,13 @@ class TodoBloc extends Bloc<TodoEvent, TodoState?> {
     });
 
     on<TodoEventAddNewTodo>((event, emit) {
+      var randomColor = (randomColorPicker ?? generateRandomColor)();
       Todo todo = Todo(
           title: event.title,
           timeCreated: event.timeCreated,
           tasks: event.tasks,
-          barColor: generateRandomColor());
+          isCompleted: false,
+          barColor: randomColor);
       storageApi.createData(todo);
       var todoData = storageApi.readAllData() as List<Todo>;
 
@@ -91,11 +93,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState?> {
     });
 
     on<TodoEventDeleteAllTodos>((event, emit) {
-      var todoData = state?.todos ?? [];
+      storageApi.deleteAllData();
+      var todoData = storageApi.readAllData() as List<Todo>;
 
-      todoData.clear();
-      emit(const TodoState(
-        todos: [],
+      emit(TodoState(
+        todos: todoData,
         unCompletedTaskCount: 0,
         completedTaskCount: 0,
       ));
@@ -105,18 +107,21 @@ class TodoBloc extends Bloc<TodoEvent, TodoState?> {
       var todoData = storageApi.readAllData() as List<Todo>;
 
       var todo = todoData[event.todoIndex];
-      var b = todo.tasks
+      var updatedTask = todo.tasks
           .mapIndexed((index, task) => index == event.taskIndex
               ? Task(title: task.title, isDone: event.isDone)
               : task)
           .toList();
+
+          
       var todod = Todo(
           title: todo.title,
           timeCreated: todo.timeCreated,
-          tasks: b,
+          tasks: updatedTask,
+          isCompleted: updatedTask.every((task) => task.isDone == true),
           barColor: todo.barColor);
 
-      storageApi.updateData(todod, todo.key);
+      storageApi.updateData(todod, todo.key ?? event.todoIndex);
 
       // var todoData = (state?.todos ?? [])
       //     .mapIndexed((todoIndex, todo) => todoIndex == event.todoIndex

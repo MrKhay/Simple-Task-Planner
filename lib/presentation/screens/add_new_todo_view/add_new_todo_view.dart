@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_task_app/data/models/task_model/task_model.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -24,6 +23,7 @@ class AddNewTodoTaskView extends HookWidget {
     FocusNode taskFocusNode = FocusNode();
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    var taskData = context.watch<TaskBloc>().state?.task ?? [];
     return WillPopScope(
       onWillPop: () async {
         context.read<TaskBloc>().add(const TaskEventRemoveAll());
@@ -31,7 +31,7 @@ class AddNewTodoTaskView extends HookWidget {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: const Text(Strings.task),
+            title: const Text(Strings.tasks),
           ),
           resizeToAvoidBottomInset: false,
           body: Padding(
@@ -98,16 +98,18 @@ class AddNewTodoTaskView extends HookWidget {
                       child: MaterialButton(
                           color: Colors.blueGrey[300],
                           onPressed: () {
-                            context.read<TaskBloc>().add(TaskEventAddNewTask(
-                                  title: taskController.text,
-                                ));
-                            taskController.clear();
+                            if (taskController.text.isNotEmpty) {
+                              context.read<TaskBloc>().add(TaskEventAddNewTask(
+                                    title: taskController.text,
+                                  ));
+                              taskController.clear();
+                            }
                           },
                           child: const Center(
                             child: Icon(
                               Icons.add,
                               size: 27,
-                              color: Colors.white,
+                              color: Colors.deepPurple,
                             ),
                           )),
                     )
@@ -148,8 +150,10 @@ class AddNewTodoTaskView extends HookWidget {
                       flex: 1,
                       child: MaterialButton(
                         height: height * 0.07,
-                        color: Colors.blue,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: const BorderSide(color: Colors.grey)),
                         onPressed: () {
                           context
                               .read<TaskBloc>()
@@ -163,23 +167,32 @@ class AddNewTodoTaskView extends HookWidget {
                               .titleMedium
                               ?.copyWith(
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.black38),
+                                  color: Colors.grey),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 20),
                     Expanded(
                       flex: 2,
                       child: MaterialButton(
                         height: height * 0.07,
-                        color: Colors.amber,
+                        color: Colors.purple.withOpacity(0.6),
                         padding: const EdgeInsets.symmetric(horizontal: 15),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
                         onPressed: () {
+                          if (titileController.text.isEmpty ||
+                              taskData.isEmpty) {
+                            return;
+                          }
                           context.read<TodoBloc>().add(TodoEventAddNewTodo(
                               title: titileController.text,
                               timeCreated: DateTime.now(),
-                              tasks:
-                                  context.read<TaskBloc>().state?.task ?? []));
+                              tasks: taskData));
+                          context
+                              .read<TaskBloc>()
+                              .add(const TaskEventRemoveAll());
+                          Navigator.pop(context);
                         },
                         child: Text(
                           Strings.add,
@@ -188,7 +201,7 @@ class AddNewTodoTaskView extends HookWidget {
                               .titleMedium
                               ?.copyWith(
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.blue),
+                                  color: Colors.white),
                         ),
                       ),
                     ),

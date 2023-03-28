@@ -30,8 +30,7 @@ extension TodoActivity on List<Todo> {
 }
 
 extension FormatDateTime on DateTime {
-  String formateDateTime() =>
-      DateFormat('yyy-MM-dd h:mm a', 'en_US').format(this);
+  String formateDateTime() => DateFormat('EEEE h:mm a', 'en_US').format(this);
   String formateDay() => DateFormat('MMMM dd', 'en_US').format(this);
 }
 

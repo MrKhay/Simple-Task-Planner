@@ -6,11 +6,15 @@ class AppTheme {
       useMaterial3: true,
       primarySwatch: Colors.blue,
       visualDensity: VisualDensity.adaptivePlatformDensity,
+      checkboxTheme: CheckboxThemeData(
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(8))),
       buttonTheme: ButtonThemeData(
           shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(20))),
       inputDecorationTheme: const InputDecorationTheme(
-        helperStyle: TextStyle(
+        hintStyle: TextStyle(
           fontWeight: FontWeight.w400,
           fontSize: 18,
           color: Colors.grey,

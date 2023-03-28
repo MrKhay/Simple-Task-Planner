@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_task_app/core/extension/todo_data_extension.dart';
-import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
 import 'package:flutter_bloc_task_app/presentation/router/app_router.dart';
-import '../../../data/models/task_model/task_model.dart';
+import 'package:flutter_bloc_task_app/presentation/screens/todo_view/widgets/customcheck_box.dart';
 import '../../../data/models/todo_model/todo_model.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import '../task_view/task_view.dart';
@@ -15,159 +14,166 @@ class TodoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todoData = context.watch<TodoBloc>().state;
-    return WillPopScope(
-      onWillPop: () async {
-        context.read<TaskBloc>().add(const TaskEventRemoveAll());
-        return true;
-      },
-      child: Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                AppRouter.addNewTodoView,
-              );
-            },
-            child: const Icon(Icons.add),
-          ),
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar.large(
-                floating: true,
-                pinned: true,
-                snap: true,
-                centerTitle: false,
-                backgroundColor: Colors.amber,
-                actions: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.menu,
-                      color: Colors.black,
-                    ),
-                  ),
-                  PopupMenuButton(
-                    splashRadius: 6,
-                    itemBuilder: (context) {
-                      return const [
-                        PopupMenuItem(child: Text('Hello')),
-                        PopupMenuItem(child: Text('Hello')),
-                        PopupMenuItem(child: Text('Hello')),
-                      ];
-                    },
-                    child: const Icon(
-                      Icons.info_outline,
-                      color: Colors.black,
-                    ),
-                  )
-                ],
-                flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  expandedTitleScale: 1.4,
-                  title: RichText(
-                      text: TextSpan(children: [
-                    TextSpan(
-                        text: 'TODAY ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(fontWeight: FontWeight.bold)),
-                    TextSpan(
-                        text: DateTime.now().formateDay(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w400))
-                  ])),
-                  background: Container(
-                    color: Colors.grey,
-                    child: Column(children: [
-                      Flexible(
-                        child: Container(
-                          alignment: Alignment.center,
-                          color: Colors.blueAccent,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Tasks ☆',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Completed ${todoData?.completedTaskCount ?? 0} ◐ Uncompleted ${todoData?.unCompletedTaskCount ?? 0}',
-                                style: Theme.of(context).textTheme.titleSmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ]),
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(
+              'TODAY',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '  ${DateTime.now().formateDay()}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w400),
                 ),
-              ),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                /// Body
-                SingleChildScrollView(
-                  child: MediaQuery.removePadding(
-                    context: context,
-                    removeTop: true,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var todo = todoData?.todos[index] ?? [] as Todo;
+                const SizedBox(height: 5),
+                const Icon(Icons.arrow_drop_down_sharp)
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                context.read<TodoBloc>().add(const TodoEventDeleteAllTodos());
+              },
+              icon: const Icon(Icons.delete_forever)),
+          PopupMenuButton(
+            icon: const Icon(
+              Icons.info_outlined,
+              color: Colors.black,
+            ),
+            position: PopupMenuPosition.under,
+            elevation: 0.5,
+            color: Colors.white.withOpacity(0.7),
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem(
+                  child: Text('Task\'s info'),
+                ),
+                PopupMenuItem(
+                    child: Text(
+                        'Completed: ${todoData?.completedTaskCount ?? 0}')),
+                PopupMenuItem(
+                    child: Text(
+                        'Uncompleted: ${todoData?.unCompletedTaskCount ?? 0}')),
+              ];
+            },
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AppRouter.addNewTodoView,
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: ListView.builder(
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          var todo = todoData?.todos[index] ?? [] as Todo;
 
-                        return GestureDetector(
-                          child: todoTile(todo),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TaskView(
-                                          todoIndex: index,
-                                        )));
-                          },
-                        );
-                      },
-                      itemCount: todoData?.todos.length ?? 0,
-                    ),
-                  ),
-                )
-              ]))
-            ],
-          )),
+          return GestureDetector(
+            child: todoTile(todo, context),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TaskView(
+                            todoIndex: index,
+                          )));
+            },
+          );
+        },
+        itemCount: todoData?.todos.length ?? 0,
+      ),
     );
   }
 }
 
-Widget todoTile(Todo todo) {
-  return ListTile(
-    leading: todo.isCompleted
-        ? Container(
-            width: 10,
-            height: 10,
-            color: todo.barColor,
-          )
-        : CircularStepProgressIndicator(
-            totalSteps: todo.tasks.length,
-            currentStep: todo.tasks.numberOfCompletedTask(),
-            stepSize: 4,
-            selectedColor: todo.barColor,
-            unselectedColor: todo.barColor.withAlpha(40),
-            padding: 0,
-            width: 30,
-            height: 30,
-            selectedStepSize: 5,
-            roundedCap: (_, __) => false,
-          ),
-    title: Text(
-      todo.title,
-      style: const TextStyle(color: Colors.black),
+Widget todoTile(Todo todo, BuildContext context) {
+  return Dismissible(
+    direction: DismissDirection.endToStart,
+    key: UniqueKey(),
+    secondaryBackground: Container(
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.only(right: 20),
+      color: Colors.red,
+      child: const Icon(
+        Icons.delete,
+        color: Colors.white,
+      ),
     ),
-    subtitle: Text(
-      todo.timeCreated.formateDateTime(),
+    background: const Icon(
+      Icons.delete,
+      color: Colors.black,
+    ),
+    onDismissed: (_) {
+      context.read<TodoBloc>().add(TodoEventDeleteTodo(
+            todo: todo,
+          ));
+    },
+    child: ListTile(
+      contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      leading: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 5,
+            decoration: BoxDecoration(
+                color: todo.isCompleted ? Colors.transparent : todo.barColor,
+                borderRadius: BorderRadius.circular(20)),
+          ),
+          const SizedBox(width: 5),
+          todo.isCompleted
+              ? CustomCheckBox(
+                  isChecked: true,
+                  onChange: () {},
+                  size: 25,
+                  iconSize: 18,
+                  checkIcon: const Icon(Icons.check_rounded),
+                  selectedColor: Colors.blue,
+                  selectedIconColor: Colors.white,
+                  borderColor: Colors.white,
+                )
+              : CircularStepProgressIndicator(
+                  totalSteps: todo.tasks.length,
+                  currentStep: todo.tasks.numberOfCompletedTask(),
+                  stepSize: 4,
+                  selectedColor: Colors.blue,
+                  unselectedColor: todo.barColor.withAlpha(40),
+                  padding: 0,
+                  width: 25,
+                  height: 25,
+                  selectedStepSize: 5,
+                  roundedCap: (_, __) => false,
+                ),
+        ],
+      ),
+      title: Text(
+        todo.title,
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      subtitle: Text(
+        todo.timeCreated.formateDateTime(),
+        style: Theme.of(context)
+            .textTheme
+            .labelMedium
+            ?.copyWith(color: Colors.grey),
+      ),
     ),
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc_task_app/core/extension/extensions.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/todo_bloc/todo_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,12 +18,12 @@ class AddNewTodoTaskView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final taskController = useTextEditingController(text: 'Title');
-    final titileController = useTextEditingController(text: 'Task');
-    FocusNode titleFocusNode = FocusNode();
-    FocusNode taskFocusNode = FocusNode();
+    final taskController = useTextEditingController(text: 'Title'.debugMode());
+    final titileController = useTextEditingController(text: 'Task'.debugMode());
+
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    final deviceTheme = Theme.of(context);
     var taskData = context.watch<TaskBloc>().state?.task ?? [];
     return WillPopScope(
       onWillPop: () async {
@@ -31,45 +32,50 @@ class AddNewTodoTaskView extends HookWidget {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: const Text(Strings.tasks),
+            backgroundColor: deviceTheme.colorScheme.background,
+            title: Text(
+              newTasks,
+              style: deviceTheme.textTheme.titleLarge,
+            ),
           ),
           resizeToAvoidBottomInset: false,
           body: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// task [Text Widget]
                 Text(
-                  Strings.activityTitle,
+                  activityTitle,
                   style: Theme.of(context)
                       .textTheme
                       .labelLarge
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 5),
-                Container(
+                const SizedBox(height: 16),
+                SizedBox(
                   height: height * 0.065,
                   width: width,
                   child: TextField(
                     controller: titileController,
+                    style: deviceTheme.textTheme.bodyLarge,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      hintText: Strings.inputActivityTitle,
+                      hintText: inputActivityTitle,
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 24),
                 Text(
-                  Strings.addTasks,
+                  addTasks,
                   style: Theme.of(context)
                       .textTheme
                       .labelLarge
                       ?.copyWith(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 7),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -79,9 +85,10 @@ class AddNewTodoTaskView extends HookWidget {
                       child: TextField(
                         controller: taskController,
                         keyboardType: TextInputType.text,
+                        style: deviceTheme.textTheme.bodyLarge,
                         textInputAction: TextInputAction.done,
                         decoration: const InputDecoration(
-                          hintText: Strings.inputTasks,
+                          hintText: inputTasks,
                         ),
                       ),
                     ),
@@ -105,18 +112,18 @@ class AddNewTodoTaskView extends HookWidget {
                               taskController.clear();
                             }
                           },
-                          child: const Center(
+                          child: Center(
                             child: Icon(
                               Icons.add,
                               size: 27,
-                              color: Colors.deepPurple,
+                              color: deviceTheme.colorScheme.onBackground,
                             ),
                           )),
                     )
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 24),
 
                 BlocBuilder<TaskBloc, TaskState?>(builder: (context, state) {
                   return Wrap(
@@ -130,7 +137,7 @@ class AddNewTodoTaskView extends HookWidget {
                             : Chip(
                                 deleteIcon: const Icon(
                                   Icons.cancel_rounded,
-                                  color: Colors.black26,
+                                  color: Colors.grey,
                                 ),
                                 onDeleted: () {
                                   context.read<TaskBloc>().add(
@@ -151,6 +158,7 @@ class AddNewTodoTaskView extends HookWidget {
                       child: MaterialButton(
                         height: height * 0.07,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
+                        splashColor: deviceTheme.primaryColor.withOpacity(0.5),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: const BorderSide(color: Colors.grey)),
@@ -161,7 +169,7 @@ class AddNewTodoTaskView extends HookWidget {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          Strings.cancle,
+                          cancle,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -171,12 +179,12 @@ class AddNewTodoTaskView extends HookWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 24),
                     Expanded(
                       flex: 2,
                       child: MaterialButton(
                         height: height * 0.07,
-                        color: Colors.purple.withOpacity(0.6),
+                        color: deviceTheme.colorScheme.primary,
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
@@ -195,13 +203,11 @@ class AddNewTodoTaskView extends HookWidget {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          Strings.add,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
+                          add,
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
                         ),
                       ),
                     ),

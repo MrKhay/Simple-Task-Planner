@@ -1,7 +1,6 @@
 import 'package:flutter_bloc_task_app/data/repositories/hive_repositories/hive_data_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../../core/constants/strings.dart';
 import '../../models/task_model/task_model.dart';
 import '../../models/todo_model/todo_model.dart';
 

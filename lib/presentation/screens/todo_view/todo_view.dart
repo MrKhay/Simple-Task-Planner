@@ -22,9 +22,7 @@ class TodoView extends StatelessWidget {
           children: [
             Text(
               'TODAY',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
+              style: deviceTheme.textTheme.titleLarge
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
             Row(
@@ -32,9 +30,7 @@ class TodoView extends StatelessWidget {
               children: [
                 Text(
                   '  ${DateTime.now().formateDay()}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
+                  style: deviceTheme.textTheme.titleLarge
                       ?.copyWith(fontWeight: FontWeight.w400),
                 ),
                 const SizedBox(height: 5),
@@ -61,18 +57,27 @@ class TodoView extends StatelessWidget {
             ),
             position: PopupMenuPosition.under,
             elevation: 0.5,
-            color: Colors.white.withOpacity(0.7),
+            color: deviceTheme.colorScheme.background.withOpacity(0.7),
             itemBuilder: (context) {
               return [
-                const PopupMenuItem(
-                  child: Text('Task\'s info'),
+                PopupMenuItem(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    child: Text(
+                      'Todo Status',
+                      style: deviceTheme.textTheme.titleMedium,
+                    ),
+                  ),
                 ),
                 PopupMenuItem(
                     child: Text(
-                        'Completed: ${todoData?.completedTaskCount ?? 0}')),
+                        'Completed: ${todoData?.completedTaskCount ?? 0}',
+                        style: deviceTheme.textTheme.titleMedium)),
                 PopupMenuItem(
                     child: Text(
-                        'Uncompleted: ${todoData?.unCompletedTaskCount ?? 0}')),
+                        'Uncompleted: ${todoData?.unCompletedTaskCount ?? 0}',
+                        style: deviceTheme.textTheme.titleMedium)),
               ];
             },
           )

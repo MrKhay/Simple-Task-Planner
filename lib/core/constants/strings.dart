@@ -1,18 +1,20 @@
-class Strings {
-  // App
-  static const appTitle = 'App Name';
+// App
+import 'package:flutter/material.dart';
 
-  // HomeScreen
-  static const homeScreenTitle = 'Home Screen';
-  static const homeScreenCenterText = 'Welcome to Flutterly!';
-  static const todo = 'TODO';
-  static const tasks = 'Tasks';
-  static const todoDataBox = 'todoDataBox';
-  static const activityTitle = 'Activity title';
-  static const inputActivityTitle = 'Input Activity Title';
-  static const inputTasks = 'Input Tasks';
-  static const addTasks = 'Tasks';
-  static const add = 'Add';
-  static const cancle = 'Cancle';
-  static const emptyField = 'Activity tile or Tasks is empty';
-}
+const appTitle = 'App Name';
+
+// HomeScreen
+const homeScreenTitle = 'Home Screen';
+const homeScreenCenterText = 'Welcome to Flutterly!';
+const todo = 'TODO';
+const tasks = 'Tasks';
+const todoDataBox = 'todoDataBox';
+const activityTitle = 'Activity Title';
+const inputActivityTitle = 'Input Activity Title';
+const inputTasks = 'Input Tasks';
+const addTasks = 'Tasks';
+const newTasks = 'New Task';
+const add = 'Add';
+const cancle = 'Cancle';
+const emptyField = 'Activity tile or Tasks is empty';
+const primaryColor = Colors.blue;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_task_app/data/data_providers/todo_data_provider/todo_data_provider.dart';
 import 'package:flutter_bloc_task_app/logic/bloc/task_bloc/task_bloc.dart';
@@ -38,9 +38,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => TaskBloc()),
       ],
       child: MaterialApp(
-        title: Strings.appTitle,
+        title: appTitle,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
         initialRoute: AppRouter.home,
         onGenerateRoute: AppRouter.onGenerateRoute,

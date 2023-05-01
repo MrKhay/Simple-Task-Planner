@@ -14,15 +14,17 @@ class TodoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todoData = context.watch<TodoBloc>().state;
+    final deviceTheme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: deviceTheme.colorScheme.background,
         title: Row(
           children: [
             Text(
               'TODAY',
               style: Theme.of(context)
                   .textTheme
-                  .titleMedium
+                  .titleLarge
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
             Row(
@@ -32,11 +34,14 @@ class TodoView extends StatelessWidget {
                   '  ${DateTime.now().formateDay()}',
                   style: Theme.of(context)
                       .textTheme
-                      .titleMedium
+                      .titleLarge
                       ?.copyWith(fontWeight: FontWeight.w400),
                 ),
                 const SizedBox(height: 5),
-                const Icon(Icons.arrow_drop_down_sharp)
+                Icon(
+                  Icons.arrow_drop_down_sharp,
+                  color: deviceTheme.colorScheme.shadow,
+                )
               ],
             ),
           ],
@@ -46,11 +51,13 @@ class TodoView extends StatelessWidget {
               onPressed: () {
                 context.read<TodoBloc>().add(const TodoEventDeleteAllTodos());
               },
-              icon: const Icon(Icons.delete_forever)),
+              icon: Icon(
+                Icons.delete_forever,
+                color: deviceTheme.colorScheme.onBackground,
+              )),
           PopupMenuButton(
             icon: const Icon(
               Icons.info_outlined,
-              color: Colors.black,
             ),
             position: PopupMenuPosition.under,
             elevation: 0.5,
@@ -72,19 +79,23 @@ class TodoView extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: deviceTheme.colorScheme.primary,
         onPressed: () {
           Navigator.pushNamed(
             context,
             AppRouter.addNewTodoView,
           );
         },
-        child: const Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: deviceTheme.colorScheme.onBackground,
+        ),
       ),
+      backgroundColor: deviceTheme.colorScheme.background,
       body: ListView.builder(
         shrinkWrap: true,
         itemBuilder: (context, index) {
           var todo = todoData?.todos[index] ?? [] as Todo;
-
           return GestureDetector(
             child: todoTile(todo, context),
             onTap: () {
@@ -153,7 +164,7 @@ Widget todoTile(Todo todo, BuildContext context) {
                   totalSteps: todo.tasks.length,
                   currentStep: todo.tasks.numberOfCompletedTask(),
                   stepSize: 4,
-                  selectedColor: Colors.blue,
+                  selectedColor: todo.barColor,
                   unselectedColor: todo.barColor.withAlpha(40),
                   padding: 0,
                   width: 25,
@@ -165,7 +176,7 @@ Widget todoTile(Todo todo, BuildContext context) {
       ),
       title: Text(
         todo.title,
-        style: Theme.of(context).textTheme.titleLarge,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       subtitle: Text(
         todo.timeCreated.formateDateTime(),
